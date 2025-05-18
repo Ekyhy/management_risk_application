@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Daftar Penyewa</title>
+</head>
+<body>
+  <h2>Data Penyewa</h2>
+
+  <table border="1">
+    <thead>
+      <tr>
+        <th>Nama</th>
+        <th>Username</th>
+        <th>Email</th>
+        <th>Tanggal Masuk</th>
+        <th>No. Kamar</th>
+        <th>Status Pembayaran</th>
+        <th>Aksi</th>
+      </tr>
+    </thead>
+    <tbody id="dataPenyewa">
+      <!-- Baris data dari fetch -->
+    </tbody>
+  </table>
+
+  <script>
+    // Fetch data penyewa dari tampil.php
+    fetch('../back-end/penyewa/tampil.php')
+      .then(res => res.json())
+      .then(data => {
+        const tbody = document.getElementById('dataPenyewa');
+        data.forEach(penyewa => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${penyewa.nama}</td>
+            <td>${penyewa.username}</td>
+            <td>${penyewa.email}</td>
+            <td>${penyewa.noKamar}</td>
+            <td>${penyewa.tanggalMasuk}</td>
+            <td>${penyewa.statusBayar == 1 ? 'Lunas' : 'Belum Lunas'}</td>
+            <td>
+              <a href="edit_penyewa.html?id=${penyewa.id_penyewa}">Edit</a>
+              |
+              <button onclick="hapusData(${penyewa.id_penyewa})">Hapus</button>
+            </td>
+          `;
+          tbody.appendChild(row);
+        });
+      });
+
+    function hapusData(id) {
+      if (confirm('Yakin ingin menghapus data ini?')) {
+        fetch(`../back-end/penyewa/hapus.php`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id_penyewa: id })
+        })
+        .then(res => res.json())
+        .then(res => {
+          alert(res.message);
+          location.reload(); // reload halaman setelah hapus
+        })
+        .catch(err => alert('Gagal hapus: ' + err));
+      }
+    }
+  </script>
+</body>
+</html>

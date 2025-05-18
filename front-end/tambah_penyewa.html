@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tambah Penyewa</title>
+</head>
+<body>
+
+  <h2>Form Tambah Penyewa</h2>
+  <form id="formPenyewa">
+    <label>Nama: <input type="text" name="nama" id="nama" required></label><br>
+    <label>Username: <input type="text" name="username" id="username" required></label><br>
+    <label>Email: <input type="email" name="email" id="email" required></label><br>
+    <label>Phone: <input type="text" name="phone" id="phone" required></label><br>
+    <label>Password: <input type="password" name="password" id="password" required></label><br>
+    <label>No Kamar: <input type="text" name="noKamar" id="noKamar" required></label><br>
+    <label>Tanggal Masuk: <input type="date" name="tanggalMasuk" id="tanggalMasuk" required></label><br>
+
+    <label>Status Bayar:
+      <select id="statusBayar">
+        <option value="1">Lunas</option>
+        <option value="0">Belum Lunas</option>
+      </select>
+    </label><br><br>
+
+    <button type="submit">Tambah</button>
+  </form>
+
+  <p id="pesan"></p>
+
+  <script>
+    document.getElementById('formPenyewa').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const formData = new FormData();
+      formData.append('nama', document.getElementById('nama').value);
+      formData.append('username', document.getElementById('username').value);
+      formData.append('email', document.getElementById('email').value);
+      formData.append('phone', document.getElementById('phone').value);
+      formData.append('password', document.getElementById('password').value);
+      formData.append('noKamar', document.getElementById('noKamar').value);
+      formData.append('tanggalMasuk', document.getElementById('tanggalMasuk').value);
+      formData.append('statusBayar', document.getElementById('statusBayar').value);
+
+      fetch('../back-end/penyewa/tambah.php', {
+        method: 'POST',
+        body: formData
+      })
+      .then(res => res.text())
+      .then(res => {
+        document.getElementById('pesan').innerText = res;
+        this.reset();
+      })
+      .catch(err => alert('Terjadi kesalahan: ' + err));
+    });
+  </script>
+
+</body>
+</html>

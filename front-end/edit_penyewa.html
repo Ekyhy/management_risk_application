@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Edit Penyewa</title>
+</head>
+<body>
+  <h2>Edit Data Penyewa</h2>
+  <form id="formEdit">
+    <input type="hidden" id="id_penyewa">
+    <label>Nama: <input type="text" id="nama"></label><br>
+    <label>Username: <input type="text" id="username"></label><br>
+    <label>Email: <input type="email" id="email"></label><br>
+    <label>No. Kamar: <input type="number" id="noKamar"></label><br>
+    <button type="submit">Simpan</button>
+  </form>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get('id');
+
+    // Isi id hidden
+    document.getElementById('id_penyewa').value = id;
+
+    // Ambil data dari server
+    fetch(`../back-end/penyewa/get.php?id=${id}`)
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('nama').value = data.nama;
+        document.getElementById('username').value = data.username;
+        document.getElementById('email').value = data.email;
+        document.getElementById('noKamar').value = data.noKamar;
+      });
+
+    // Submit form
+    document.getElementById('formEdit').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const payload = {
+        id_penyewa: document.getElementById('id_penyewa').value,
+        nama: document.getElementById('nama').value,
+        username: document.getElementById('username').value,
+        email: document.getElementById('email').value,
+        noKamar: document.getElementById('noKamar').value
+      };
+
+      fetch('../back-end/penyewa/edit.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+      .then(res => res.json())
+      .then(res => {
+        alert(res.message);
+        if (res.status) {
+          window.location.href = 'index_penyewa.html'; // arahkan balik setelah edit
+        }
+      });
+    });
+  </script>
+</body>
+</html>
